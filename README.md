@@ -9,5 +9,5 @@ The user inserts the following values:
 
 Then, the app calculates the amount the user can claim relief on. It also calculates the amount they save based on their tax band. Finally, it copies the tax relief amount to the clipboard for the user to use it in filling their self-assessment forms.
 ![1](https://github.com/user-attachments/assets/a853ba02-37b7-4488-bb67-152e3287fac0)
-![2](https://github.com/user-attachments/assets/6e9cd995-bc80-4eb5-bcaa-1e8683f672b2)
+![2](https://github.com/user-attachments/assets/55da33bd-6052-4e14-965a-6bf159efc4f9)
 ![3](https://github.com/user-attachments/assets/65e58386-424d-4ed7-8707-fde617aef2ce)
