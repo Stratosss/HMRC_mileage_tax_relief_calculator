@@ -1,5 +1,5 @@
 # HMRC_mileage_tax_relief_calculator (Annual & Monthly)
-This project focuses on the development of 2 applicaations to help the users calculate their HMRC tax relief amount stemming from their business mileage for each financial year.
+This project focuses on the development of 2 applications to help the users calculate their HMRC tax relief amount stemming from their business mileage for each financial year.
 The app assumes that the user is compensated with a standard amount pence/mile by their organisation for the whole financial year.
 
 The user inserts the following values:
