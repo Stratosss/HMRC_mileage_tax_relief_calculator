@@ -4,6 +4,8 @@ import flet as ft
 
 
 def main(page: ft.Page):
+    page.theme_mode = ft.ThemeMode.DARK
+    
     company_compensation = ft.TextField(
         label="Insert pence/mile compensation of your company",
         border=ft.InputBorder.NONE,
@@ -125,4 +127,5 @@ def main(page: ft.Page):
     )
     )
  
+
 ft.app(main)
