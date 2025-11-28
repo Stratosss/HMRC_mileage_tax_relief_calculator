@@ -55,14 +55,14 @@ def main(page: ft.Page):
             ys = int(year_start_mileage.value)
             ms = int(monthly_mileage_start.value)
             mf = int(monthly_mileage_finish.value)
-            tb = tax_rate
+            tr = tax_rate
 
             if all(x >= 0 for x in [cc, first10, after10, ys, ms, mf]):
                 if mf < ms or ms < ys:
                     message_text.value = "⚠️ End mileage must be higher than start mileage which must be higher than start of year mileage" 
                 else:
                     message_text.value = ""
-                    calculation(cc, first10, after10, ys, ms, mf, tb)
+                    calculation(cc, first10, after10, ys, ms, mf, tr)
             else:
                 message_text.value = "⚠️ Numbers must be non-negative"
 
@@ -75,29 +75,46 @@ def main(page: ft.Page):
         page.update()
                 
         
-    def calculation(compensation, first10_rate, after10_rate,year_start_miles, miles_start, miles_finish, tb):
+    def calculation(compensation, first10_rate, after10_rate,year_start_miles, miles_start, miles_finish, tax_band):
+        monthly_miles = miles_finish - miles_start
         diff_start = miles_start - year_start_miles
         diff_finish = miles_finish - year_start_miles
        
-        if diff_start <= 10000 and diff_finish > 10000:
-            tax_relief_result = ((first10_rate-compensation)*(10000 - diff_start) + (diff_finish-10000)*(after10_rate-compensation))/100
-            print("more than 10k")
+       # Protection from negative relief (HMRC never gives negative allowances)
+        def relief_per_band(hmrc_rate, company_rate, miles):
+            return max(hmrc_rate - company_rate, 0) * miles / 100
+
+        # Case 1: Entire month below 10k
+        if  diff_start < 10000 and diff_finish <= 10000: 
+            tax_relief = relief_per_band(first10_rate, compensation, monthly_miles)
+            print("less than 10k")
+            
+        # Case 2: Entire month above 10k
         elif diff_start > 10000:
-            tax_relief_result = ((after10_rate-compensation)*(diff_finish - diff_start))/100
-            print("only after 10k")        
+            tax_relief = relief_per_band(after10_rate, compensation, monthly_miles)
+            print("only after 10k")
+            
+        # Case 3: Month crosses 10k threshold
         else:
-             tax_relief_result = ((first10_rate-compensation)*(10000 - diff_start))/100
-             print("less than 10k")
-                
-        savings_result = tax_relief_result *tb
+            miles_before_10k = 10000 - diff_start
+            miles_after_10k = diff_finish - 10000
+            
+            relief_before = relief_per_band(first10_rate, compensation, miles_before_10k)
+            relief_after = relief_per_band(after10_rate, compensation, miles_after_10k)
+
+            tax_relief = relief_before + relief_after
+            print("started before 10k ended after 10k")
+               
+    
+        savings_result = tax_relief * tax_band
         
-        tax_relief_text.value = f"💰 The amount you can claim relief on is: £{tax_relief_result:.2f}"
+        tax_relief_text.value = f"💰 The amount you can claim relief on is: £{tax_relief:.2f}"
         tax_relief_text.visible = True
         savings_text.value = f"💰 Based on your tax band you save for this month: £{savings_result:.2f}"
         savings_text.visible = True
         copied_text.value = "👉 Your tax relief amount was copied to clipboard!"
         copied_text.visible = True
-        pyperclip.copy(tax_relief_result)
+        pyperclip.copy(tax_relief)
         page.update()
     
     
