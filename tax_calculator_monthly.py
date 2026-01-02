@@ -2,7 +2,56 @@ import pyperclip
 import flet as ft
 
 
+def validate_inputs(cc, first10, after10, ys, ms, mf, tax_rate):
+    if tax_rate == "":
+        return "⚠️ Please choose your tax band"
 
+    if any(x < 0 for x in [cc, first10, after10, ys, ms, mf]):
+        return "⚠️ Numbers must be non-negative"
+
+    if mf < ms or ms < ys:
+        return (
+            "⚠️ End mileage must be higher than start mileage "
+            "which must be higher than start of year mileage"
+        )
+
+    return None # ✅ VALID
+
+def calculate_tax_relief(compensation, first10_rate, after10_rate,year_start_miles, miles_start, miles_finish, tax_band):
+    monthly_miles = miles_finish - miles_start
+    diff_start = miles_start - year_start_miles
+    diff_finish = miles_finish - year_start_miles
+    
+    # Protection from negative relief (HMRC never gives negative allowances)
+    def relief_per_band(hmrc_rate, company_rate, miles):
+        return max(hmrc_rate - company_rate, 0) * miles / 100
+
+    # Case 1: Entire month below 10k
+    if  diff_start < 10000 and diff_finish <= 10000: 
+        tax_relief = relief_per_band(first10_rate, compensation, monthly_miles)
+        case ="less than 10k"
+        
+    # Case 2: Entire month above 10k
+    elif diff_start > 10000:
+        tax_relief = relief_per_band(after10_rate, compensation, monthly_miles)
+        case ="only after 10k"
+
+    # Case 3: Month crosses 10k threshold
+    else:
+        miles_before_10k = 10000 - diff_start
+        miles_after_10k = diff_finish - 10000
+        
+        relief_before = relief_per_band(first10_rate, compensation, miles_before_10k)
+        relief_after = relief_per_band(after10_rate, compensation, miles_after_10k)
+
+        tax_relief = relief_before + relief_after
+        case = "started before 10k ended after 10k"
+   
+    savings = tax_relief * tax_band
+    
+    return tax_relief, savings , case
+
+    
 def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.DARK
     page.window.width = 1200
@@ -50,9 +99,8 @@ def main(page: ft.Page):
     tax_relief_text = ft.Text(visible=False, size=20, color=ft.Colors.GREEN_ACCENT_100, weight=ft.FontWeight.BOLD)
     savings_text = ft.Text(visible=False, size=20, color=ft.Colors.GREEN_ACCENT_100, weight=ft.FontWeight.NORMAL)
     copied_text = ft.Text(visible=False, size=16, italic=True, color=ft.Colors.GREY)    
-    
-    
-    def is_int(e):
+        
+    def validation(e):
         try:
             cc = int(company_compensation.value)
             first10 = int(hmrc_first_10k.value)
@@ -62,66 +110,30 @@ def main(page: ft.Page):
             mf = int(monthly_mileage_finish.value)
             tr = tax_rate
 
-            if all(x >= 0 for x in [cc, first10, after10, ys, ms, mf]):
-                if mf < ms or ms < ys:
-                    message_text.value = "⚠️ End mileage must be higher than start mileage which must be higher than start of year mileage" 
-                else:
-                    message_text.value = ""
-                    calculation(cc, first10, after10, ys, ms, mf, tr)
-            else:
-                message_text.value = "⚠️ Numbers must be non-negative"
+            error = validate_inputs(cc, first10, after10, ys, ms, mf, tr)
 
+            if error:
+                message_text.value = error
+                page.update()
+                return   # ❌ STOP here if validation fails
+
+            # ✅ VALIDATION PASSED 
+            message_text.value = ""
+            tax_relief, savings_result, case = calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
+
+            tax_relief_text.value = f"💰 The amount you can claim relief on is: £{tax_relief:.2f}"
+            tax_relief_text.visible = True
+            savings_text.value = f"💰 Based on your tax band you save for this month: £{savings_result:.2f}"
+            savings_text.visible = True
+            copied_text.value = "👉 Your tax relief amount was copied to clipboard!"
+            copied_text.visible = True
+            pyperclip.copy(tax_relief)
+            page.update()
+            
         except ValueError:
             message_text.value = "⚠️ Please enter valid integers"
-        except TypeError:
-            message_text.value = "⚠️ Please choose your tax band"
-            print(e)
-
-        page.update()
+            page.update()
                 
-        
-    def calculation(compensation, first10_rate, after10_rate,year_start_miles, miles_start, miles_finish, tax_band):
-        monthly_miles = miles_finish - miles_start
-        diff_start = miles_start - year_start_miles
-        diff_finish = miles_finish - year_start_miles
-       
-       # Protection from negative relief (HMRC never gives negative allowances)
-        def relief_per_band(hmrc_rate, company_rate, miles):
-            return max(hmrc_rate - company_rate, 0) * miles / 100
-
-        # Case 1: Entire month below 10k
-        if  diff_start < 10000 and diff_finish <= 10000: 
-            tax_relief = relief_per_band(first10_rate, compensation, monthly_miles)
-            print("less than 10k")
-            
-        # Case 2: Entire month above 10k
-        elif diff_start > 10000:
-            tax_relief = relief_per_band(after10_rate, compensation, monthly_miles)
-            print("only after 10k")
-            
-        # Case 3: Month crosses 10k threshold
-        else:
-            miles_before_10k = 10000 - diff_start
-            miles_after_10k = diff_finish - 10000
-            
-            relief_before = relief_per_band(first10_rate, compensation, miles_before_10k)
-            relief_after = relief_per_band(after10_rate, compensation, miles_after_10k)
-
-            tax_relief = relief_before + relief_after
-            print("started before 10k ended after 10k")
-               
-    
-        savings_result = tax_relief * tax_band
-        
-        tax_relief_text.value = f"💰 The amount you can claim relief on is: £{tax_relief:.2f}"
-        tax_relief_text.visible = True
-        savings_text.value = f"💰 Based on your tax band you save for this month: £{savings_result:.2f}"
-        savings_text.visible = True
-        copied_text.value = "👉 Your tax relief amount was copied to clipboard!"
-        copied_text.visible = True
-        pyperclip.copy(tax_relief)
-        page.update()
-    
     
     def tax_bands_dropdown(e):
         nonlocal tax_rate
@@ -154,7 +166,7 @@ def main(page: ft.Page):
             monthly_mileage_start,
             monthly_mileage_finish,
             tax_band,
-            ft.FilledButton(text="Calculate", on_click=is_int),
+            ft.FilledButton(text="Calculate", on_click=validation),
             message_text,  # Warning/result appears here
             tax_relief_text,
             savings_text,
@@ -168,13 +180,12 @@ def main(page: ft.Page):
                     italic=True,
                 ),
                 alignment=ft.alignment.bottom_right,
-                padding=10,
+                # padding=10,
             )
         ],
         spacing=10
     )
     )
- 
-ft.app(main)
-
-
+    
+if __name__ == "__main__":
+    ft.app(main) 
