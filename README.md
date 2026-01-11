@@ -12,7 +12,7 @@ Then, the app calculates the amount the user can claim relief on. It also calcul
 The app checks for correct user input (positive integers are accepted) and gives warning if the "calculate" button is pressed when cells are empty, or inappropirate input is given.
 Two different versions of this App were created. One calculates the annual tax return & the other performs the calculations monthly.
 
-11/1/2026: In the most recent version, I added a LIGHT / DARK theme button and the user has the option to save the results in an excel file. If the file exists, it appends the latest values. If the file does not exist it creates it and appends the values. 
+11/1/2026: In the most recent version of monthly calculator, I added a LIGHT / DARK theme button and the user has the option to save the results in an excel file. If the file exists, it appends the latest values. If the file does not exist it creates it and appends the values. 
 The save button is disabled until all validations pass and results are displayed. When the User presses the Save button, a message appears saying the values were saved on file: "Records.xlsx" and becomes disabled again, until new calculations are made.
 
 ![1](https://github.com/user-attachments/assets/707e01c5-cdb9-46fc-8f2e-1c8a20911fd6)
