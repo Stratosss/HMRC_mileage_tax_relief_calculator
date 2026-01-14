@@ -10,7 +10,7 @@ The user inserts the following values:
 Then, the app calculates the amount the user can claim relief on. It also calculates the amount they save based on their tax band. 
 The app checks for correct user input (positive integers are accepted) and gives warning if the "calculate" button is pressed when cells are empty, or inappropirate input is given.
 
-11/1/2026: Added a LIGHT / DARK theme button as well as some icons to make it more user-friendly and appealing. 
+11/1/2026: Added a LIGHT / DARK theme button as well as some icons to make it more user-friendly and appealing. \n
 The user has now the option to save the results in an excel file. If the file exists, it appends the latest values. If the file does not exist it creates it and appends the values. 
 The save button is disabled until all validations pass and results are displayed. When the User presses the Save button, a message appears saying the values were saved on file: "Records.xlsx" and becomes disabled again, until new calculations are made.
 
