@@ -11,7 +11,7 @@ def main(page: ft.Page):
     
     # Flet page configuration
     page.theme_mode = ft.ThemeMode.DARK
-    page.window.width = 1200
+    page.window.width = 800
     page.window.height = 800
     # page.window.resizable = False 
     
@@ -110,36 +110,42 @@ def main(page: ft.Page):
         border=ft.InputBorder.NONE,
         filled=True,
         hint_text="Enter text here",
+        expand=True
     )
     hmrc_first_10k = ft.TextField(
         label="Insert HMRC pence/mile for the first 10k miles",
         border=ft.InputBorder.NONE,
         filled=True,
         hint_text="Enter text here",
+        expand=True
     )
     hmrc_rest = ft.TextField(
         label="Insert HMRC pence/mile for the rest of the miles",
         border=ft.InputBorder.NONE,
         filled=True,
         hint_text="Enter text here",
+        expand=True
     )
     year_start_mileage = ft.TextField(
         label="Insert business mileage at the beginning of tax year",
         border=ft.InputBorder.NONE,
         filled=True,
         hint_text="Enter text here",
+        expand=True
     )
     monthly_mileage_start = ft.TextField(
         label="Insert business mileage at the beginning of the month",
         border=ft.InputBorder.NONE,
         filled=True,
         hint_text="Enter text here",
+        expand=True
     )
     monthly_mileage_finish = ft.TextField(
         label="Insert business mileage at the end of the month",
         border=ft.InputBorder.NONE,
         filled=True,
         hint_text="Enter text here",
+        expand=True
     )        
         
     
@@ -193,18 +199,21 @@ def main(page: ft.Page):
             page.update()
                 
     # Tax bands dropdown change handler
-    def tax_bands_dropdown(e):
+    
+    def handle_dropdown_select(e: ft.Event[ft.Dropdown]):
         nonlocal tax_rate
+        print(e.control.value)  # Debug: Check selected value
         selected = e.control.value
         tax_rate = float(selected.strip('%')) / 100
-        
+        page.update()
+            
     tax_band = ft.Dropdown(
         label="Tax Band",
         options=[
             ft.dropdown.Option("20%"),
             ft.dropdown.Option("40%"),
         ],
-        on_change=tax_bands_dropdown,    
+        on_select=handle_dropdown_select
     )
     
     # Theme change function
@@ -242,20 +251,20 @@ def main(page: ft.Page):
         )
 
     theme_button = ft.FilledButton(
-        text=" ",
+        content=" ",
         on_click=change_theme,
         disabled=False,
         icon=ft.Icons.LIGHT_MODE
         )
     
     calculation_button = ft.FilledButton(
-        text="Calculate", 
+        content="Calculate", 
         on_click=validation,
         icon=ft.Icons.CALCULATE
         )
     
     save_button = ft.FilledButton(
-        text="Save",
+        content="Save",
         on_click=write_to_excel,
         disabled=True,
         icon=ft.Icons.SAVE 
@@ -264,12 +273,12 @@ def main(page: ft.Page):
     footer = ft.Container(
         content=ft.Text(
             "Disclaimer: This is an estimate, not tax advice. Always check with HMRC guidance.\n"
-            "Developed by Stratos Gialouris - All rights reserved ©️2026",
-            size=16,
+            f"Developed by Stratos Gialouris - All rights reserved © {datetime.now().year}",
+            size=12,
             color=ft.Colors.WHITE,
             italic=True,
         ),
-        alignment=ft.alignment.bottom_right,
+        alignment=ft.Alignment.BOTTOM_RIGHT
         )
 
     page.add(
@@ -291,11 +300,12 @@ def main(page: ft.Page):
             tax_relief_text,
             savings_text,
             saved_text,
-            footer
+            
         ],
         spacing=10
     ),
-
+    ft.Container(expand=True), # This container will take up all the remaining space, pushing the footer to the bottom when the message text and info tile are not visible
+    footer
     )
            
 if __name__ == "__main__":
