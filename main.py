@@ -82,7 +82,6 @@ def main(page: ft.Page):
             page.update()
                 
     # Tax bands dropdown change handler
-    
     def handle_dropdown_select(e: ft.Event[ft.Dropdown]):
         nonlocal tax_rate
         print(e.control.value)  # Debug: Check selected value
@@ -112,6 +111,7 @@ def main(page: ft.Page):
 
         page.update()
         
+    #App Contents & Design      
     company_compensation = ft.TextField(
         label="Insert pence/mile compensation of your company",
         border=ft.InputBorder.NONE,
@@ -169,8 +169,7 @@ def main(page: ft.Page):
         ],
         on_select=handle_dropdown_select
     )
-        
-    #App Contents & Design     
+           
     message_text = ft.Text(color=ft.Colors.RED, weight=ft.FontWeight.BOLD)    
     tax_relief_text = ft.Text(visible=False, size=20, color=ft.Colors.GREEN_ACCENT_100, weight=ft.FontWeight.BOLD)
     savings_text = ft.Text(visible=False, size=20, color=ft.Colors.GREEN_ACCENT_100, weight=ft.FontWeight.NORMAL)
