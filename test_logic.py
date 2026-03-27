@@ -1,6 +1,7 @@
 import logic as lg
 import pytest
 
+#pytest requires name to start with 'test_' to be recognised as test functions, and the file name must either start with 'test_' or end with '_test.py' to be recognised.
 # --- Validation Tests ---
 
 def test_valid_input():
