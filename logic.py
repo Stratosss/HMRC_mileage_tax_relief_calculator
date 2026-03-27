@@ -1,4 +1,4 @@
-import tax_calculator_monthly as script
+import main as script
 
 # Function to validate inputs
 def validate_inputs(cc, first10, after10, ys, ms, mf, tax_rate):
