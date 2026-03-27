@@ -2,6 +2,7 @@ import flet as ft
 import pandas as pd
 import os
 from datetime import datetime
+import logic as lg
 
 contents_dict = {}
 file_name = 'Records.xlsx'
@@ -44,67 +45,7 @@ def main(page: ft.Page):
         saved_text.value = f"👉 Your results were saved to file: {file_name}!"
         saved_text.visible = True
         page.update()
-        
-    # Function to validate inputs
-    def validate_inputs(cc, first10, after10, ys, ms, mf, tax_rate):
-        if tax_rate == "":
-            tax_relief_text.visible = False
-            savings_text.visible = False
-            saved_text.visible = False
-            return "⚠️ Please choose your tax band"
-
-        if any(x < 0 for x in [cc, first10, after10, ys, ms, mf]):
-            tax_relief_text.visible = False
-            savings_text.visible = False
-            saved_text.visible = False
-            return "⚠️ Numbers must be non-negative"
-
-        if mf < ms or ms < ys:
-            tax_relief_text.visible = False
-            savings_text.visible = False
-            saved_text.visible = False
-            return "⚠️ End mileage must be higher than start mileage which must be higher than start of year mileage"
-            
-
-        return None # ✅ VALID
-
-    # Function to calculate tax relief
-    def calculate_tax_relief(compensation, first10_rate, after10_rate,year_start_miles, miles_start, miles_finish, tax_band):
-        monthly_miles = miles_finish - miles_start
-        diff_start = miles_start - year_start_miles
-        diff_finish = miles_finish - year_start_miles
-        
-        # Protection from negative relief (HMRC never gives negative allowances)
-        def relief_per_band(hmrc_rate, company_rate, miles):
-            return max(hmrc_rate - company_rate, 0) * miles / 100
-
-        # Case 1: Entire month below 10k
-        if  diff_start < 10000 and diff_finish <= 10000: 
-            tax_relief = relief_per_band(first10_rate, compensation, monthly_miles)
-            case ="less than 10k"
-            
-        # Case 2: Entire month above 10k
-        elif diff_start > 10000:
-            tax_relief = relief_per_band(after10_rate, compensation, monthly_miles)
-            case ="only after 10k"
-
-        # Case 3: Month crosses 10k threshold
-        else:
-            miles_before_10k = 10000 - diff_start
-            miles_after_10k = diff_finish - 10000
-            
-            relief_before = relief_per_band(first10_rate, compensation, miles_before_10k)
-            relief_after = relief_per_band(after10_rate, compensation, miles_after_10k)
-
-            tax_relief = relief_before + relief_after
-            case = "started before 10k ended after 10k"
-    
-        savings = tax_relief * tax_band
-        
-        return tax_relief, savings , case
-    
-       
-    
+   
     company_compensation = ft.TextField(
         label="Insert pence/mile compensation of your company",
         border=ft.InputBorder.NONE,
@@ -161,15 +102,18 @@ def main(page: ft.Page):
             mf = int(monthly_mileage_finish.value)
             tr = tax_rate
            
-            error = validate_inputs(cc, first10, after10, ys, ms, mf, tr)
+            error_msg = lg.validate_inputs(cc, first10, after10, ys, ms, mf, tr)
 
-            if error:
-                message_text.value = error
+            if error_msg:
+                tax_relief_text.visible = False
+                savings_text.visible = False
+                saved_text.visible = False
+                message_text.value = error_msg
                 page.update()
                 return   # ❌ STOP here if validation fails
 
             # ✅ VALIDATION PASSED 
-            tax_relief, savings_result, case = calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
+            tax_relief, savings_result, case = lg.calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
             
             contents_dict.update({
                 'cc': cc,
@@ -203,7 +147,8 @@ def main(page: ft.Page):
     def handle_dropdown_select(e: ft.Event[ft.Dropdown]):
         nonlocal tax_rate
         print(e.control.value)  # Debug: Check selected value
-        selected = e.control.value
+        # Use an empty string as a fallback so .strip() always exists
+        selected = e.control.value or ""
         tax_rate = float(selected.strip('%')) / 100
         page.update()
             

@@ -1,5 +1,5 @@
 import unittest
-import tax_calculator_monthly as script
+import logic as script
 
 
 class TestValidationFunction(unittest.TestCase):
