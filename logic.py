@@ -1,4 +1,7 @@
 import main as script
+import pandas as pd
+import os
+from datetime import datetime
 
 # Function to validate inputs
 def validate_inputs(cc, first10, after10, ys, ms, mf, tax_rate):
@@ -47,3 +50,36 @@ def calculate_tax_relief(compensation, first10_rate, after10_rate,year_start_mil
     savings = tax_relief * tax_band
     
     return tax_relief, savings , case
+
+# Function to write results to Excel
+def write_to_excel(contents_dict, file_name):
+    try:
+        current_month = datetime.now().strftime("%B")
+        current_year = datetime.now().year
+        date = f"{current_month} {current_year}"    
+        
+        row = {
+                'Month' : date,
+                'Company Compensation (p/mile)' : contents_dict["cc"],
+                'HMRC First 10k (p/mile)' : contents_dict["first10"],
+                'HMRC After 10k (p/mile)' : contents_dict["after10"],
+                'Year Start Mileage' : contents_dict["ys"],
+                'Month Start Mileage' : contents_dict["ms"],
+                'Month End Mileage' : contents_dict["mf"],
+                'Tax Band (%)' : contents_dict["tr"] * 100,
+                'Tax Relief (£)' : contents_dict["tax_relief"],
+                'Savings (£)' : round(contents_dict["savings_result"], 2)
+            }
+        df = pd.DataFrame([row])
+        if not os.path.isfile(file_name):
+            df.to_excel(file_name, index=False, engine="openpyxl")
+        else:
+            df_existing = pd.read_excel(file_name, engine="openpyxl", index_col=None)
+            df_updated = pd.concat([df_existing, df], ignore_index=True)
+            df_updated.to_excel(file_name, index=False, engine="openpyxl")
+        return f"👉 Your results were saved to file: {file_name}!"
+    except PermissionError:
+        return f"❌ Error: Could not save! Please close '{file_name}' and try again."
+    except Exception as e:
+        return f"⚠️ An unexpected error occurred: {e}"
+    

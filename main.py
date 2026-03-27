@@ -1,95 +1,34 @@
 import flet as ft
 import pandas as pd
-import os
 from datetime import datetime
 import logic as lg
 
-contents_dict = {}
-file_name = 'Records.xlsx'
 
             
 def main(page: ft.Page):
+    
+    contents_dict = {}
+    file_name =f'Records_{datetime.now().year}.xlsx'
+    tax_rate ="" 
     
     # Flet page configuration
     page.theme_mode = ft.ThemeMode.DARK
     page.window.min_width = 800
     page.window.min_height = 800
+    page.window.height = 830
     # page.window.resizable = False 
     
-    # Function to write results to Excel
-    def write_to_excel(e):
-        current_month = datetime.now().strftime("%B")
-        current_year = datetime.now().year
-        date = f"{current_month} {current_year}"    
-        
-        row = {
-                'Month' : date,
-                'Company Compensation (p/mile)' : contents_dict["cc"],
-                'HMRC First 10k (p/mile)' : contents_dict["first10"],
-                'HMRC After 10k (p/mile)' : contents_dict["after10"],
-                'Year Start Mileage' : contents_dict["ys"],
-                'Month Start Mileage' : contents_dict["ms"],
-                'Month End Mileage' : contents_dict["mf"],
-                'Tax Band (%)' : contents_dict["tr"] * 100,
-                'Tax Relief (£)' : contents_dict["tax_relief"],
-                'Savings (£)' : round(contents_dict["savings_result"], 2)
-            }
-        df = pd.DataFrame([row])
-        if not os.path.isfile(file_name):
-            df.to_excel(file_name, index=False, engine="openpyxl")
-        else:
-            df_existing = pd.read_excel(file_name, engine="openpyxl", index_col=None)
-            df_updated = pd.concat([df_existing, df], ignore_index=True)
-            df_updated.to_excel(file_name, index=False, engine="openpyxl")
+    def write_to_excel_handler(e):
+        saved_text.value = lg.write_to_excel(contents_dict, file_name)
         save_button.disabled = True
-        saved_text.value = f"👉 Your results were saved to file: {file_name}!"
         saved_text.visible = True
         page.update()
-   
-    company_compensation = ft.TextField(
-        label="Insert pence/mile compensation of your company",
-        border=ft.InputBorder.NONE,
-        filled=True,
-        hint_text="Enter text here",
-        expand=True
-    )
-    hmrc_first_10k = ft.TextField(
-        label="Insert HMRC pence/mile for the first 10k miles",
-        border=ft.InputBorder.NONE,
-        filled=True,
-        hint_text="Enter text here",
-        expand=True
-    )
-    hmrc_rest = ft.TextField(
-        label="Insert HMRC pence/mile for the rest of the miles",
-        border=ft.InputBorder.NONE,
-        filled=True,
-        hint_text="Enter text here",
-        expand=True
-    )
-    year_start_mileage = ft.TextField(
-        label="Insert business mileage at the beginning of tax year",
-        border=ft.InputBorder.NONE,
-        filled=True,
-        hint_text="Enter text here",
-        expand=True
-    )
-    monthly_mileage_start = ft.TextField(
-        label="Insert business mileage at the beginning of the month",
-        border=ft.InputBorder.NONE,
-        filled=True,
-        hint_text="Enter text here",
-        expand=True
-    )
-    monthly_mileage_finish = ft.TextField(
-        label="Insert business mileage at the end of the month",
-        border=ft.InputBorder.NONE,
-        filled=True,
-        hint_text="Enter text here",
-        expand=True
-    )        
-        
     
+    def handle_text_change(e):
+    # If they change input after calculation, we should disable save button
+        save_button.disabled = True  # 👈 They must click 'Calculate' again
+        page.update()
+   
     # Validation and calculation function    
     def validation(e):
         message_text.value = ""
@@ -150,16 +89,8 @@ def main(page: ft.Page):
         # Use an empty string as a fallback so .strip() always exists
         selected = e.control.value or ""
         tax_rate = float(selected.strip('%')) / 100
+        save_button.disabled = True  # 👈 They must click 'Calculate' again after changing tax band
         page.update()
-            
-    tax_band = ft.Dropdown(
-        label="Tax Band",
-        options=[
-            ft.dropdown.Option("20%"),
-            ft.dropdown.Option("40%"),
-        ],
-        on_select=handle_dropdown_select
-    )
     
     # Theme change function
     def change_theme(e):
@@ -181,8 +112,65 @@ def main(page: ft.Page):
 
         page.update()
         
-    #App Contents & Design
-    tax_rate =""      
+    company_compensation = ft.TextField(
+        label="Insert pence/mile compensation of your company",
+        border=ft.InputBorder.NONE,
+        filled=True,
+        hint_text="Enter text here",
+        expand=True,
+        on_change=handle_text_change
+    )
+    hmrc_first_10k = ft.TextField(
+        label="Insert HMRC pence/mile for the first 10k miles",
+        border=ft.InputBorder.NONE,
+        filled=True,
+        hint_text="Enter text here",
+        expand=True,
+        on_change=handle_text_change
+    )
+    hmrc_rest = ft.TextField(
+        label="Insert HMRC pence/mile for the rest of the miles",
+        border=ft.InputBorder.NONE,
+        filled=True,
+        hint_text="Enter text here",
+        expand=True,
+        on_change=handle_text_change
+    )
+    year_start_mileage = ft.TextField(
+        label="Insert business mileage at the beginning of tax year",
+        border=ft.InputBorder.NONE,
+        filled=True,
+        hint_text="Enter text here",
+        expand=True,
+        on_change=handle_text_change
+    )
+    monthly_mileage_start = ft.TextField(
+        label="Insert business mileage at the beginning of the month",
+        border=ft.InputBorder.NONE,
+        filled=True,
+        hint_text="Enter text here",
+        expand=True,
+        on_change=handle_text_change
+    )
+    monthly_mileage_finish = ft.TextField(
+        label="Insert business mileage at the end of the month",
+        border=ft.InputBorder.NONE,
+        filled=True,
+        hint_text="Enter text here",
+        expand=True,
+        on_change=handle_text_change
+    )        
+            
+    tax_band = ft.Dropdown(
+        label="Tax Band",
+        options=[
+            ft.dropdown.Option("20%"),
+            ft.dropdown.Option("40%"),
+        ],
+        on_select=handle_dropdown_select
+    )
+        
+    #App Contents & Design     
     message_text = ft.Text(color=ft.Colors.RED, weight=ft.FontWeight.BOLD)    
     tax_relief_text = ft.Text(visible=False, size=20, color=ft.Colors.GREEN_ACCENT_100, weight=ft.FontWeight.BOLD)
     savings_text = ft.Text(visible=False, size=20, color=ft.Colors.GREEN_ACCENT_100, weight=ft.FontWeight.NORMAL)
@@ -207,10 +195,10 @@ def main(page: ft.Page):
         on_click=validation,
         icon=ft.Icons.CALCULATE
         )
-    
+        
     save_button = ft.FilledButton(
         content="Save",
-        on_click=write_to_excel,
+        on_click=write_to_excel_handler,
         disabled=True,
         icon=ft.Icons.SAVE 
         )
