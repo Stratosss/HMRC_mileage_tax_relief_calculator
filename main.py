@@ -12,8 +12,8 @@ def main(page: ft.Page):
     
     # Flet page configuration
     page.theme_mode = ft.ThemeMode.DARK
-    page.window.width = 800
-    page.window.height = 800
+    page.window.min_width = 800
+    page.window.min_height = 800
     # page.window.resizable = False 
     
     # Function to write results to Excel
