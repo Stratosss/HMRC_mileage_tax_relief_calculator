@@ -1,7 +1,7 @@
-🚗 HMRC Mileage Tax Relief Calculator
+#🚗 HMRC Mileage Tax Relief Calculator
 A sleek, Flet-based desktop application designed to help UK drivers calculate their eligible tax relief for business mileage. This tool compares company compensation against official HMRC rates and provides a monthly savings estimate based on your tax band.
 
-✨ Key Features
+##✨ Key Features
 Reactive UI: Built with Python and Flet, featuring a dynamic interface that responds instantly to user input.
 
 Smart Validation: Integrated error handling to ensure mileage and compensation values are valid integers before calculation.
@@ -14,7 +14,7 @@ Excel Export: Save your monthly records directly to a timestamped Excel file (Re
 
 Dark/Light Mode: Toggle between themes for a comfortable user experience.
 
-🛠️ Technical Stack
+##🛠️ Technical Stack
 Frontend: Flet (Flutter for Python)
 
 Logic & Data: Python 3.12, Pandas (for Excel handling)
@@ -23,7 +23,7 @@ Testing: Pytest
 
 Version Control: Git (Feature-branch workflow)
 
-🧪 Testing & Quality Assurance
+##🧪 Testing & Quality Assurance
 The core calculation logic is decoupled from the UI to ensure accuracy. We maintain a suite of unit tests covering various HMRC scenarios (pre-10k miles, post-10k miles, and threshold crossovers).
 
 To run the tests:
@@ -33,7 +33,7 @@ pytest
 Current Status: 8/8 Tests Passing ✅
 -------------------------------
 
-🚀 Installation & Setup
+##🚀 Installation & Setup
 Clone the repository:
 git clone https://github.com/Stratosss/HMRC_mileage_tax_relief_calculator.git
 cd HMRC_mileage_tax_relief_calculator
@@ -44,7 +44,7 @@ pip install flet pandas openpyxl pytest
 Run the application:
 python main.py
 
-📂 Project Structure
+##📂 Project Structure
 main.py: The entry point containing the Flet UI and event handlers.
 
 logic.py: The "brain" of the app containing tax calculation and validation logic.
@@ -53,7 +53,7 @@ test_logic.py: Pytest suite for verifying calculation accuracy.
 
 .gitignore: Configured to exclude generated Excel reports and Python cache.
 
-📝 Disclaimer
+##📝 Disclaimer
 This tool provides estimates based on standard HMRC guidance. It is not a substitute for professional tax advice. Always verify your final figures with official HMRC documentation.
 
 Developed by Stratos Gialouris — 2026
