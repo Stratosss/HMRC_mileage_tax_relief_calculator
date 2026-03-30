@@ -29,12 +29,12 @@ def calculate_tax_relief(compensation, first10_rate, after10_rate,year_start_mil
     # Case 1: Entire month below 10k
     if  diff_start < 10000 and diff_finish <= 10000: 
         tax_relief = relief_per_band(first10_rate, compensation, monthly_miles)
-        case ="less than 10k"
+   
         
     # Case 2: Entire month above 10k
     elif diff_start > 10000:
         tax_relief = relief_per_band(after10_rate, compensation, monthly_miles)
-        case ="only after 10k"
+
 
     # Case 3: Month crosses 10k threshold
     else:
@@ -45,11 +45,11 @@ def calculate_tax_relief(compensation, first10_rate, after10_rate,year_start_mil
         relief_after = relief_per_band(after10_rate, compensation, miles_after_10k)
 
         tax_relief = relief_before + relief_after
-        case = "started before 10k ended after 10k"
+
 
     savings = tax_relief * tax_band
     
-    return tax_relief, savings , case
+    return tax_relief, savings
 
 # Function to write results to Excel
 def write_to_excel(contents_dict, file_name):
