@@ -15,19 +15,31 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.DARK
     page.window.min_width = 800
     page.window.min_height = 800
-    page.window.height = 830
+    page.window.height = 800
+    page.window.width = 800
     # page.window.resizable = False 
+    
     
     def write_to_excel_handler(e):
         saved_text.value = lg.write_to_excel(contents_dict, file_name)
         save_button.disabled = True
         saved_text.visible = True
+        
         page.update()
     
     def handle_text_change(e):
     # If they change input after calculation, we should disable save button
         save_button.disabled = True  # 👈 They must click 'Calculate' again
+  
+        all_fields = [company_compensation, hmrc_first_10k, hmrc_rest, 
+                    year_start_mileage, monthly_mileage_start, monthly_mileage_finish,tax_band]
+       
+        if any(textObject.value for textObject in all_fields):  # 👈 If any field has text, enable reset button
+            reset_button.disabled = False
+        else:
+            reset_button.disabled = True      
         page.update()
+   
    
     # Validation and calculation function    
     def validation(e):
@@ -48,11 +60,13 @@ def main(page: ft.Page):
                 savings_text.visible = False
                 saved_text.visible = False
                 message_text.value = error_msg
+                
                 page.update()
+                
                 return   # ❌ STOP here if validation fails
 
             # ✅ VALIDATION PASSED 
-            tax_relief, savings_result, case = lg.calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
+            tax_relief, savings_result = lg.calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
             
             contents_dict.update({
                 'cc': cc,
@@ -72,6 +86,7 @@ def main(page: ft.Page):
             savings_text.visible = True
             save_button.disabled = False
             saved_text.visible = False
+            
             page.update()
             
         except ValueError:
@@ -79,16 +94,39 @@ def main(page: ft.Page):
             tax_relief_text.visible = False
             savings_text.visible = False
             saved_text.visible = False
+            
             page.update()
+    
+    def reset_values(e):
+        nonlocal tax_rate
+        
+        company_compensation.value = ""
+        hmrc_first_10k.value = ""
+        hmrc_rest.value = ""
+        year_start_mileage.value = ""
+        monthly_mileage_start.value = ""
+        monthly_mileage_finish.value = ""
+        tax_band.value = None
+        tax_rate = ""
+        message_text.value = ""
+        tax_relief_text.value = ""
+        savings_text.value = ""
+        tax_relief_text.visible = False
+        savings_text.visible = False
+        saved_text.visible = False
+        save_button.disabled = True
+        reset_button.disabled = True
+        
+        page.update()    
                 
     # Tax bands dropdown change handler
     def handle_dropdown_select(e: ft.Event[ft.Dropdown]):
         nonlocal tax_rate
         print(e.control.value)  # Debug: Check selected value
-        # Use an empty string as a fallback so .strip() always exists
-        selected = e.control.value or ""
+        selected = e.control.value
         tax_rate = float(selected.strip('%')) / 100
         save_button.disabled = True  # 👈 They must click 'Calculate' again after changing tax band
+        handle_text_change(None)  # 👈 Check if reset button should be enabled based on current field values
         page.update()
     
     # Theme change function
@@ -189,6 +227,14 @@ def main(page: ft.Page):
         icon=ft.Icons.LIGHT_MODE
         )
     
+    reset_button = ft.FilledButton(
+        content="Clear all",
+        on_click=reset_values,
+        disabled=True,
+        icon=ft.Icons.REFRESH,
+        bgcolor=ft.Colors.RED,
+        )
+    
     calculation_button = ft.FilledButton(
         content="Calculate", 
         on_click=validation,
@@ -217,7 +263,11 @@ def main(page: ft.Page):
     ft.Column(
         controls=[
             header,
-            theme_button,
+            ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            controls=
+            [theme_button,
+            reset_button]),
             company_compensation,
             hmrc_first_10k,
             hmrc_rest,
