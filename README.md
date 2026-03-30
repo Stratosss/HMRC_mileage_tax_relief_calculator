@@ -26,12 +26,12 @@ Version Control: Git (Feature-branch workflow)
 ## 🧪 Testing & Quality Assurance  
 The core calculation logic is decoupled from the UI to ensure accuracy. We maintain a suite of unit tests covering various HMRC scenarios (pre-10k miles, post-10k miles, and threshold crossovers).
 
-To run the tests:  
-cd [directory]
-pytest
--------------------------------
+To run the tests, type the following in your terminal:  
+- cd [directory]
+- pytest
+
 Current Status: 8/8 Tests Passing ✅
--------------------------------
+
 
 ## 🚀 Installation & Setup  
 Clone the repository:  
