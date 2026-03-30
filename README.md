@@ -29,7 +29,6 @@ The core calculation logic is decoupled from the UI to ensure accuracy. We maint
 To run the tests:
 cd [directory]
 pytest
-
 -------------------------------
 Current Status: 8/8 Tests Passing ✅
 -------------------------------
