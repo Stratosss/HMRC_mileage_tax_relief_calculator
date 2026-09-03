@@ -29,12 +29,12 @@ def main(page: ft.Page):
     
     def handle_text_change(e):
     # If they change input after calculation, we should disable save button
-        save_button.disabled = True  # 👈 They must click 'Calculate' again
+        save_button.disabled = True  # They must click 'Calculate' again
   
         all_fields = [company_compensation, hmrc_first_10k, hmrc_rest, 
                     year_start_mileage, monthly_mileage_start, monthly_mileage_finish,tax_band]
        
-        if any(textObject.value for textObject in all_fields):  # 👈 If any field has text, enable reset button
+        if any(textObject.value for textObject in all_fields):  # If any field has text, enable reset button
             reset_button.disabled = False
         else:
             reset_button.disabled = True      
