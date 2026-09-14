@@ -247,18 +247,28 @@ def main(page: ft.Page):
         disabled=True,
         icon=ft.Icons.SAVE 
         )
+       
+    footer1 = ft.Container(
+            content=ft.Text(
+                "Disclaimer: This is an estimate, not tax advice. Always check with HMRC guidance.\n"
+                f"Developed by Stratos Gialouris - All rights reserved © {datetime.now().year}",
+                size=12,
+                color=ft.Colors.WHITE,
+                italic=True,
+            ),
+            alignment=ft.Alignment.BOTTOM_RIGHT
+            )
     
-    footer = ft.Container(
+    footer2 = ft.Container(
         content=ft.Text(
-            "Disclaimer: This is an estimate, not tax advice. Always check with HMRC guidance.\n"
-            f"Developed by Stratos Gialouris - All rights reserved © {datetime.now().year}",
+            "Version 1.2",
             size=12,
             color=ft.Colors.WHITE,
             italic=True,
         ),
-        alignment=ft.Alignment.BOTTOM_RIGHT
+        alignment=ft.Alignment.BOTTOM_LEFT
         )
-
+    
     page.add(
     ft.Column(
         controls=[
@@ -287,7 +297,8 @@ def main(page: ft.Page):
         spacing=10
     ),
     ft.Container(expand=True), # This container will take up all the remaining space, pushing the footer to the bottom when the message text and info tile are not visible
-    footer
+    footer1,
+    footer2,
     )
            
 if __name__ == "__main__":
