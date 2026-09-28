@@ -71,6 +71,7 @@ def write_to_excel(contents_dict, file_name):
                 'Savings (£)' : round(contents_dict["savings_result"], 2)
             }
         df = pd.DataFrame([row])
+        print(file_name)
         if not os.path.isfile(file_name):
             df.to_excel(file_name, index=False, engine="openpyxl")
         else:
@@ -81,5 +82,6 @@ def write_to_excel(contents_dict, file_name):
     except PermissionError:
         return f"❌ Error: Could not save! Please close '{file_name}' and try again."
     except Exception as e:
+        print(e)
         return f"⚠️ An unexpected error occurred: {e}"
     

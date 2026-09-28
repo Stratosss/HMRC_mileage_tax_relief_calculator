@@ -6,11 +6,14 @@ import config as cfg
 
             
 def main(page: ft.Page):
-    
+    day_of_the_month = datetime.now().day
+    month_number = datetime.now().month
+    year = datetime.now().year
     contents_dict = {}
-    file_name =f'Records_{datetime.now().year}.xlsx'
+    file_name =f"Tax year {year}-{year + 1}.xlsx"
     tax_rate ="" 
-    data = cfg.open_json(56448)  # Load settings from JSON file, providing a default starting mileage of 56448 if the file doesn't exist
+    data = cfg.open_json()  # Load settings from JSON file, providing a default starting mileage of 56448 if the file doesn't exist
+    
     # Flet page configuration
     page.theme_mode = ft.ThemeMode.DARK
     page.window.min_width = 800
@@ -44,7 +47,7 @@ def main(page: ft.Page):
     # Validation and calculation function    
     def validation(e):
         message_text.value = ""
-        try:    #Initial validation for integers required here, outside of validation function because the data are received as strings
+        try:    # Initial validation for integers required here, outside of validation function because the data are received as strings
             cc = int(company_compensation.value)
             first10 = int(hmrc_first_10k.value)
             after10 = int(hmrc_rest.value)
@@ -52,7 +55,9 @@ def main(page: ft.Page):
             ms = int(monthly_mileage_start.value)
             mf = int(monthly_mileage_finish.value)
             tr = tax_rate
-           
+
+            cfg.reset_json(data, ys, day_of_the_month=6, month_number=4, year=2027)  # Call the reset_json function to check if the tax year needs to be updated and reset starting mileage if necessary
+            
             error_msg = lg.validate_inputs(cc, first10, after10, ys, ms, mf, tr)
 
             if error_msg:
@@ -180,7 +185,7 @@ def main(page: ft.Page):
         filled=True,
         hint_text="Enter text here",
         expand=True,
-        value=str(data.get("starting_mileage", "")),
+        value=str(data.get("starting_mileage", "")), # Set the default value from the JSON file (probably the "" can be ommitted)
         on_change=handle_text_change
     )
     monthly_mileage_start = ft.TextField(
@@ -252,7 +257,7 @@ def main(page: ft.Page):
     footer1 = ft.Container(
             content=ft.Text(
                 "Disclaimer: This is an estimate, not tax advice. Always check with HMRC guidance.\n"
-                f"Developed by Stratos Gialouris - All rights reserved © {datetime.now().year}",
+                f"Developed by Stratos Gialouris - All rights reserved © {year}",
                 size=12,
                 color=ft.Colors.WHITE,
                 italic=True,
