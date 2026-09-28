@@ -2,7 +2,7 @@ import flet as ft
 import pandas as pd
 from datetime import datetime
 import logic as lg
-
+import config as cfg
 
             
 def main(page: ft.Page):
@@ -10,7 +10,7 @@ def main(page: ft.Page):
     contents_dict = {}
     file_name =f'Records_{datetime.now().year}.xlsx'
     tax_rate ="" 
-    
+    data = cfg.open_json(56448)  # Load settings from JSON file, providing a default starting mileage of 56448 if the file doesn't exist
     # Flet page configuration
     page.theme_mode = ft.ThemeMode.DARK
     page.window.min_width = 800
@@ -180,6 +180,7 @@ def main(page: ft.Page):
         filled=True,
         hint_text="Enter text here",
         expand=True,
+        value=str(data.get("starting_mileage", "")),
         on_change=handle_text_change
     )
     monthly_mileage_start = ft.TextField(
