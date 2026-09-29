@@ -8,12 +8,18 @@ import config as cfg
 def main(page: ft.Page):
     day_of_the_month = datetime.now().day
     month_number = datetime.now().month
+    # day_of_the_month = 6
+    # month_number = 4
     year = datetime.now().year
+    # year = 2028
     contents_dict = {}
     file_name =f"Tax year {year}-{year + 1}.xlsx"
     tax_rate ="" 
     data = cfg.open_json()  # Load settings from JSON file, providing a default starting mileage of 56448 if the file doesn't exist
     
+    if day_of_the_month == 6 and month_number == 4:
+        data["starting_mileage"] = ""  # Reset starting mileage to empty string on 6th April
+       
     # Flet page configuration
     page.theme_mode = ft.ThemeMode.DARK
     page.window.min_width = 800
@@ -56,7 +62,6 @@ def main(page: ft.Page):
             mf = int(monthly_mileage_finish.value)
             tr = tax_rate
 
-            cfg.reset_json(data, ys, day_of_the_month=6, month_number=4, year=2027)  # Call the reset_json function to check if the tax year needs to be updated and reset starting mileage if necessary
             
             error_msg = lg.validate_inputs(cc, first10, after10, ys, ms, mf, tr)
 
@@ -65,34 +70,33 @@ def main(page: ft.Page):
                 savings_text.visible = False
                 saved_text.visible = False
                 message_text.value = error_msg
+                page.update()
+                return   # ❌ STOP here if validation fails
+            else:
+                cfg.reset_json(data, ys, day_of_the_month, month_number, year)  # Call the reset_json function to check if the tax year needs to be updated and reset starting mileage if necessary
+                # ✅ VALIDATION PASSED 
+                tax_relief, savings_result = lg.calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
+                
+                contents_dict.update({
+                    'cc': cc,
+                    'first10': first10,
+                    'after10': after10,
+                    'ys': ys,
+                    'ms': ms,
+                    'mf': mf,
+                    'tr': tr,
+                    'tax_relief': tax_relief,
+                    'savings_result': savings_result
+                })
+                
+                tax_relief_text.value = f"💰 The amount you can claim relief on is: £{tax_relief:.2f}"
+                tax_relief_text.visible = True
+                savings_text.value = f"💰 Based on your tax band you save for this month: £{savings_result:.2f}"
+                savings_text.visible = True
+                save_button.disabled = False
+                saved_text.visible = False
                 
                 page.update()
-                
-                return   # ❌ STOP here if validation fails
-
-            # ✅ VALIDATION PASSED 
-            tax_relief, savings_result = lg.calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
-            
-            contents_dict.update({
-                'cc': cc,
-                'first10': first10,
-                'after10': after10,
-                'ys': ys,
-                'ms': ms,
-                'mf': mf,
-                'tr': tr,
-                'tax_relief': tax_relief,
-                'savings_result': savings_result
-            })
-            
-            tax_relief_text.value = f"💰 The amount you can claim relief on is: £{tax_relief:.2f}"
-            tax_relief_text.visible = True
-            savings_text.value = f"💰 Based on your tax band you save for this month: £{savings_result:.2f}"
-            savings_text.visible = True
-            save_button.disabled = False
-            saved_text.visible = False
-            
-            page.update()
             
         except ValueError:
             message_text.value = "⚠️ Please enter valid integers"
@@ -267,7 +271,7 @@ def main(page: ft.Page):
     
     footer2 = ft.Container(
         content=ft.Text(
-            "Version 1.2",
+            str(data.get("app_version", "1.0.0")),  # Display the app version from the JSON file, defaulting to "1.0.0" if not found
             size=12,
             color=ft.Colors.WHITE,
             italic=True,
