@@ -51,6 +51,8 @@ logic.py: The "brain" of the app containing tax calculation and validation logic
 
 test_logic.py: Pytest suite for verifying calculation accuracy.
 
+config.py: Opens current JSON file or creates one from scratch if one is not available. The settings.json file includes information about app version, current tax year and starting mileage at the begining of the tax year. It is used to change the version number, the tax year for calculation and the name of the "Records" excel file on the fly without having to hard code anything. It also populates the starting mileage field every time the app is used, in order to avoid repetition from the user. The starting mileage resets and awaits input from user only when it's the begining of the new tax year.
+
 .gitignore: Configured to exclude generated Excel reports and Python cache.
 
 ## 📝 Disclaimer  
