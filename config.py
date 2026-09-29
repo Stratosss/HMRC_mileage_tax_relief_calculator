@@ -1,8 +1,7 @@
 import json
-from datetime import datetime #import it from main.py?
 
 
-def open_json():
+def open_json(year):
     try:
         with open("settings.json", "r") as my_file:
             print("file found and loaded")
@@ -12,7 +11,7 @@ def open_json():
         print("file not found- Proceed with creation of default settings.json file")
         data = {
                 "app_version": "1.2.0",
-                "tax_year": f"{datetime.now().year}/{datetime.now().year + 1}",
+                "tax_year": f"{year}/{year + 1}",
                 }
         json_str = json.dumps(data, indent=4)
         with open("settings.json", "w") as my_file:

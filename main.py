@@ -8,14 +8,14 @@ import config as cfg
 def main(page: ft.Page):
     day_of_the_month = datetime.now().day
     month_number = datetime.now().month
-    # day_of_the_month = 6
-    # month_number = 4
     year = datetime.now().year
+    # day_of_the_month = 6 #testing purposes
+    # month_number = 4
     # year = 2028
     contents_dict = {}
     file_name =f"Tax year {year}-{year + 1}.xlsx"
     tax_rate ="" 
-    data = cfg.open_json()  # Load settings from JSON file, providing a default starting mileage of 56448 if the file doesn't exist
+    data = cfg.open_json(year)  # Load settings from JSON file, providing a default starting mileage of 56448 if the file doesn't exist
     
     if day_of_the_month == 6 and month_number == 4:
         data["starting_mileage"] = ""  # Reset starting mileage to empty string on 6th April
@@ -271,7 +271,7 @@ def main(page: ft.Page):
     
     footer2 = ft.Container(
         content=ft.Text(
-            str(data.get("app_version", "1.0.0")),  # Display the app version from the JSON file, defaulting to "1.0.0" if not found
+            f"Version {str(data.get("app_version", "1.0.0"))}",  # Display the app version from the JSON file, defaulting to "1.0.0" if not found
             size=12,
             color=ft.Colors.WHITE,
             italic=True,
