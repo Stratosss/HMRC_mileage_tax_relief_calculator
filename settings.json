@@ -1,4 +1,8 @@
 {
     "app_version": "1.2.0",
-    "tax_year": "2026/2027"
+    "current_year": 2030,
+    "tax_year": "2030-2031",
+    "first time user": false,
+    "New_tax_year": false,
+    "starting_mileage": 4444
 }

@@ -1,7 +1,6 @@
 import main as script
 import pandas as pd
 import os
-from datetime import datetime
 
 # Function to validate inputs
 def validate_inputs(cc, first10, after10, ys, ms, mf, tax_rate):
@@ -52,10 +51,8 @@ def calculate_tax_relief(compensation, first10_rate, after10_rate,year_start_mil
     return tax_relief, savings
 
 # Function to write results to Excel
-def write_to_excel(contents_dict, file_name):
+def write_to_excel(contents_dict, file_name, current_month, current_year):
     try:
-        current_month = datetime.now().strftime("%B")
-        current_year = datetime.now().year
         date = f"{current_month} {current_year}"    
         
         row = {
@@ -71,7 +68,7 @@ def write_to_excel(contents_dict, file_name):
                 'Savings (£)' : round(contents_dict["savings_result"], 2)
             }
         df = pd.DataFrame([row])
-        print(file_name)
+
         if not os.path.isfile(file_name):
             df.to_excel(file_name, index=False, engine="openpyxl")
         else:

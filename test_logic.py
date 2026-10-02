@@ -1,7 +1,9 @@
 import logic as lg
 import pytest
 
-#pytest requires name to start with 'test_' to be recognised as test functions, and the file name must either start with 'test_' or end with '_test.py' to be recognised.
+#Pytest requires name to start with 'test_' to be recognised as test functions, and the file name must either start with 'test_' or end with '_test.py' to be recognised.
+#To run the tests, use the command 'pytest -v test_logic.py' in the terminal, and pytest will automatically discover and run all test functions in files that match the naming convention.
+
 # --- Validation Tests ---
 
 def test_valid_input():

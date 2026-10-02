@@ -6,19 +6,22 @@ import config as cfg
 
             
 def main(page: ft.Page):
-    day_of_the_month = datetime.now().day
-    month_number = datetime.now().month
-    year = datetime.now().year
-    # day_of_the_month = 6 #testing purposes
-    # month_number = 4
-    # year = 2028
-    contents_dict = {}
-    file_name =f"Tax year {year}-{year + 1}.xlsx"
-    tax_rate ="" 
-    data = cfg.open_json(year)  # Load settings from JSON file, providing a default starting mileage of 56448 if the file doesn't exist
+    # day_of_the_month = datetime.now().day
+    # month_number = datetime.now().month
+    # current_month_name = datetime.now().strftime("%B")
+    # year = datetime.now().year
+    day_of_the_month = 16 #testing purposes
+    month_number = 1
+    current_month_name = "january" #testing purposes
+    year = 2031
     
-    if day_of_the_month == 6 and month_number == 4:
-        data["starting_mileage"] = ""  # Reset starting mileage to empty string on 6th April
+    contents_dict = {}
+    tax_rate ="" 
+    file_name =""
+    json_data = cfg.open_json(year)  # Load settings from JSON file
+    
+
+    
        
     # Flet page configuration
     page.theme_mode = ft.ThemeMode.DARK
@@ -30,7 +33,7 @@ def main(page: ft.Page):
     
     
     def write_to_excel_handler(e):
-        saved_text.value = lg.write_to_excel(contents_dict, file_name)
+        saved_text.value = lg.write_to_excel(contents_dict, file_name,current_month_name, year)
         save_button.disabled = True
         saved_text.visible = True
         
@@ -52,6 +55,7 @@ def main(page: ft.Page):
    
     # Validation and calculation function    
     def validation(e):
+        nonlocal file_name
         message_text.value = ""
         try:    # Initial validation for integers required here, outside of validation function because the data are received as strings
             cc = int(company_compensation.value)
@@ -73,7 +77,10 @@ def main(page: ft.Page):
                 page.update()
                 return   # ❌ STOP here if validation fails
             else:
-                cfg.reset_json(data, ys, day_of_the_month, month_number, year)  # Call the reset_json function to check if the tax year needs to be updated and reset starting mileage if necessary
+                cfg.reset_json_condition(json_data, ys, day_of_the_month, month_number, year)  # Call the reset_json function to check if the tax year needs to be updated and reset starting mileage if necessary
+                
+                file_name =f"Tax year {json_data['tax_year']}.xlsx" #<------Deal with the file name and path for the Excel file, using the tax year from the JSON data
+
                 # ✅ VALIDATION PASSED 
                 tax_relief, savings_result = lg.calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
                 
@@ -131,7 +138,7 @@ def main(page: ft.Page):
     # Tax bands dropdown change handler
     def handle_dropdown_select(e: ft.Event[ft.Dropdown]):
         nonlocal tax_rate
-        print(e.control.value)  # Debug: Check selected value
+        # print(e.control.value)  # Debug: Check selected value
         selected = e.control.value
         tax_rate = float(selected.strip('%')) / 100
         save_button.disabled = True  # 👈 They must click 'Calculate' again after changing tax band
@@ -143,7 +150,8 @@ def main(page: ft.Page):
         if page.theme_mode == ft.ThemeMode.DARK:
             page.theme_mode = ft.ThemeMode.LIGHT
             theme_button.icon = ft.Icons.DARK_MODE
-            footer.content.color = ft.Colors.BLACK
+            footer1.content.color = ft.Colors.BLACK
+            footer2.content.color = ft.Colors.BLACK
             tax_relief_text.color = ft.Colors.GREEN_ACCENT_700
             savings_text.color = ft.Colors.GREEN_ACCENT_700
             saved_text.color = ft.Colors.BLACK
@@ -151,7 +159,8 @@ def main(page: ft.Page):
         else:
             page.theme_mode = ft.ThemeMode.DARK
             theme_button.icon = ft.Icons.LIGHT_MODE
-            footer.content.color = ft.Colors.WHITE
+            footer1.content.color = ft.Colors.WHITE
+            footer2.content.color = ft.Colors.WHITE
             tax_relief_text.color = ft.Colors.GREEN_ACCENT_100
             savings_text.color = ft.Colors.GREEN_ACCENT_100
             saved_text.color = ft.Colors.WHITE
@@ -189,7 +198,7 @@ def main(page: ft.Page):
         filled=True,
         hint_text="Enter text here",
         expand=True,
-        value=str(data.get("starting_mileage", "")), # Set the default value from the JSON file (probably the "" can be ommitted)
+        value=str(json_data.get("starting_mileage", "")), # Set the default value from the JSON file
         on_change=handle_text_change
     )
     monthly_mileage_start = ft.TextField(
@@ -271,7 +280,7 @@ def main(page: ft.Page):
     
     footer2 = ft.Container(
         content=ft.Text(
-            f"Version {str(data.get("app_version", "1.0.0"))}",  # Display the app version from the JSON file, defaulting to "1.0.0" if not found
+            f"Version {str(json_data.get('app_version', '1.0.0'))}",  # Display the app version from the JSON file, defaulting to "1.0.0" if not found
             size=12,
             color=ft.Colors.WHITE,
             italic=True,
