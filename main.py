@@ -10,10 +10,10 @@ def main(page: ft.Page):
     # month_number = datetime.now().month
     # current_month_name = datetime.now().strftime("%B")
     # year = datetime.now().year
-    day_of_the_month = 22 #testing purposes
-    month_number = 12
-    current_month_name = "december" #testing purposes
-    year = 2029
+    day_of_the_month = 14 #testing purposes
+    month_number = 5
+    current_month_name = "may" #testing purposes
+    year = 2028
     
     contents_dict = {}
     tax_rate ="" 
