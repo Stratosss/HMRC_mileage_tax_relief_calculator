@@ -61,6 +61,7 @@ This tool provides estimates based on standard HMRC guidance. It is not a substi
 Developed by Stratos Gialouris — 2026
 
 ![1](https://github.com/user-attachments/assets/6410878c-db98-4f17-aae2-6ec1c69ca4e6)
+<img width="786" height="793" alt="image" src="https://github.com/user-attachments/assets/1148ca1c-6d7d-4404-b284-93d41eed6cd2" />
 ![2](https://github.com/user-attachments/assets/267a2ef0-0f02-4299-9009-ca8bd0f5e6e2)
 ![3](https://github.com/user-attachments/assets/8900da5b-c653-4e72-b83d-1d3e863c3335)
 ![4](https://github.com/user-attachments/assets/e7c65ba9-7fe2-4877-ac6d-e9906ed198ff)
