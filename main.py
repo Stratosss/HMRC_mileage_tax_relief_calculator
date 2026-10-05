@@ -80,7 +80,7 @@ def main(page: ft.Page):
             else:
                 cfg.reset_json_condition(json_data, ys, day_of_the_month, month_number, year)  # Call the reset_json function to check if the tax year needs to be updated and reset starting mileage if necessary
                 
-                file_name =f"Tax year {json_data['tax_year']}.xlsx" #<------Deal with the file name and path for the Excel file, using the tax year from the JSON data
+                file_name =f"Records_for_tax_year_{json_data['tax_year']}.xlsx" #<------Deal with the file name and path for the Excel file, using the tax year from the JSON data
 
                 # ✅ VALIDATION PASSED 
                 tax_relief, savings_result = lg.calculate_tax_relief(cc, first10, after10, ys, ms, mf, tr)
