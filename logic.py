@@ -1,4 +1,3 @@
-import main as script
 import pandas as pd
 import os
 
