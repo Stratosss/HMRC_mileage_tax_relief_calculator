@@ -47,7 +47,7 @@ python main.py
 ## 📂 Project Structure  
 main.py: The entry point containing the Flet UI and event handlers.
 
-logic.py: The "brain" of the app containing tax calculation and validation logic.
+logic.py: The "brain" of the app containing tax calculation and validation logic. Starting mileage remains populated for existing user, till new tax year is detected when it returns to an empty cell. For new user it starts with an empty cell until it's populated.
 
 test_logic.py: Pytest suite for verifying calculation accuracy.
 
