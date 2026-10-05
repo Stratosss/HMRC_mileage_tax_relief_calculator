@@ -10,19 +10,21 @@ def main(page: ft.Page):
     # month_number = datetime.now().month
     # current_month_name = datetime.now().strftime("%B")
     # year = datetime.now().year
-    day_of_the_month = 12 #testing purposes
-    month_number = 2
-    current_month_name = "february" #testing purposes
-    year = 2027
+    day_of_the_month = 15 #testing purposes
+    month_number = 4
+    current_month_name = "april" #testing purposes
+    year = 2029
     
     contents_dict = {}
     tax_rate ="" 
     file_name =""
     json_data = cfg.open_json(year)  # Load settings from JSON file
-    
-
-    
-       
+            
+    if not json_data["new_user"]: # Reset starting mileage cell to empty for the new tax year for non-first time users, if the new tax year validation returns True
+        if cfg.new_tax_year_validation(json_data, day_of_the_month, month_number,year):
+            json_data['starting_mileage'] = ""  
+            print("setting starting mileage to empty for the new tax year for non-first time users")
+            
     # Flet page configuration
     page.theme_mode = ft.ThemeMode.DARK
     page.window.min_width = 800
@@ -30,8 +32,7 @@ def main(page: ft.Page):
     page.window.height = 800
     page.window.width = 800
     # page.window.resizable = False 
-    
-    
+        
     def write_to_excel_handler(e):
         saved_text.value = lg.write_to_excel(contents_dict, file_name,current_month_name, year)
         save_button.disabled = True
@@ -319,6 +320,6 @@ def main(page: ft.Page):
     footer1,
     footer2,
     )
-           
+
 if __name__ == "__main__":
     ft.app(main) 

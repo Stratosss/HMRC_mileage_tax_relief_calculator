@@ -11,7 +11,7 @@ def open_json(year):
         print("JSON file not found- Proceed with creation of default settings.json file")
         data = {
                 "app_version": "1.2.0",
-                "current_year": 0, # Starts with the current year to compare for the reset condition, will be updated when the tax year changes
+                "current_year": 0,
                 "tax_year": "",
                 "new_user": True,
                 }
@@ -26,7 +26,7 @@ def reset_json_condition(json_file, miles, day_of_the_month, month_number,year):
         json_file["new_user"] = False # Set the "new_user" flag to False to indicate that the user has been initialized
         print("new user detected. Setting new_user flag to False and checking for new tax year.")
         
-        if month_number == 4 and day_of_the_month < 6: #because it will not be able to return true in  determine_tax_year function, therefore it will not overwrite
+        if month_number == 4 and day_of_the_month < 6: #setting up new tax year for the first time; then it will be used to determine the result of the new tax year validation funciton.
             json_file["new_tax_year"] = False
         elif month_number < 4:
             json_file["new_tax_year"] = False
