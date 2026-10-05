@@ -10,7 +10,7 @@ Automated State Management: * "Calculate" and "Save" buttons enable/disable base
 
 A centralized Reset system that clears all inputs and result displays.
 
-Excel Export: Save your monthly records directly to a timestamped Excel file (Records_2026.xlsx) for easy record-keeping. Error-proof: catches error if file is open upon pressing save button and warns the user. 
+Excel Export: Save your monthly records directly to a timestamped Excel file (Records_for_Tax_year_2026-2027.xlsx) for easy record-keeping. Error-proof: catches error if file is open upon pressing save button and warns the user. 
 
 Dark/Light Mode: Toggle between themes for a comfortable user experience.
 
@@ -45,9 +45,9 @@ Run the application:
 python main.py
 
 ## 📂 Project Structure  
-main.py: The entry point containing the Flet UI and event handlers.
+main.py: The entry point containing the Flet UI and event handlers. Starting mileage remains populated for existing user, till new tax year is detected when it returns to an empty cell. For new user it starts with an empty cell until it's populated.
 
-logic.py: The "brain" of the app containing tax calculation and validation logic. Starting mileage remains populated for existing user, till new tax year is detected when it returns to an empty cell. For new user it starts with an empty cell until it's populated.
+logic.py: The "brain" of the app containing tax calculation and validation logic. 
 
 test_logic.py: Pytest suite for verifying calculation accuracy.
 
